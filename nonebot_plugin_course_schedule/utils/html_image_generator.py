@@ -48,19 +48,16 @@ class HTMLImageGenerator:
                         status = "ongoing"
                         status_text = "进行中"
                     elif now < course["start_time"]:
-                        status = "upcoming"
+                        status = "next"
                         status_text = "下一节"
-                    else:
-                        status = "past"
-                        status_text = "已结束"
                 else:
-                    status = "no_class"
-                    status_text = "今日无课"
+                    status = "ended"
+                    status_text = "已结束"
                 
                 # 格式化时间信息
                 if course.get("start_time") and course.get("end_time"):
                     time_str = f"{course['start_time'].strftime('%H:%M')} - {course['end_time'].strftime('%H:%M')}"
-                elif status == "no_class":
+                elif status == "ended":
                     time_str = "今日所有课程已结束"
                 else:
                     time_str = "时间未知"

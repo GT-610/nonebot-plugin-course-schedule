@@ -22,10 +22,10 @@
                 <div class="arrow"></div>
                 <div class="course-content">
                     <div class="nickname">{{ course.nickname }}</div>
-                    <div class="status-badge {{ course.status_class }}">{{ course.status_text }}</div>
+                    <div class="status-badge {{ course.status }}">{{ course.status_text }}</div>
                     <div class="course-details">
-                        <div class="course-info">{{ course.summary }} @ {{ course.location }}</div>
-                        <div class="time-info">{{ course.time_str }} ({{ course.detail_text }})</div>
+                        <div class="course-info">{{ course.course_info }}</div>
+                        <div class="time-info">{{ course.time_info }}</div>
                     </div>
                 </div>
             </div>
