@@ -2,8 +2,8 @@
 """
 本模块负责使用HTML模板生成插件所需的图片，如图形化课程表和排行榜。
 """
-import os
 import tempfile
+import os
 from datetime import datetime, timezone, timedelta, date
 from typing import Dict, List
 from pathlib import Path
@@ -12,6 +12,10 @@ from nonebot import logger, require
 from jinja2 import Environment, FileSystemLoader
 
 from ..config import config
+
+# 设置fontconfig配置文件路径
+fontconfig_path = Path(__file__).parent.parent / "resources" / "fonts.conf"
+os.environ["FONTCONFIG_FILE"] = str(fontconfig_path)
 
 # 导入HTML渲染插件
 require("nonebot_plugin_htmlkit")
@@ -26,6 +30,9 @@ class HTMLImageGenerator:
         template_path = Path(__file__).parent.parent / "templates"
         self.env = Environment(loader=FileSystemLoader(template_path))
         self.template_path = str(template_path)
+        
+        # 加载字体配置
+        self.font_path = config.course_font_path
 
     async def generate_schedule_image(self, courses: List[Dict]) -> str:
         """生成群课程表图片并返回图片文件路径"""
