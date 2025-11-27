@@ -37,9 +37,57 @@ class HTMLImageGenerator:
     async def generate_schedule_image(self, courses: List[Dict]) -> str:
         """生成群课程表图片并返回图片文件路径"""
         try:
+            # 格式化课程数据
+            formatted_courses = []
+            now = datetime.now(timezone(timedelta(hours=8)))
+            
+            for course in courses:
+                # 确定课程状态和状态文本
+                if course.get("start_time") and course.get("end_time"):
+                    if course["start_time"] <= now < course["end_time"]:
+                        status = "ongoing"
+                        status_text = "进行中"
+                    elif now < course["start_time"]:
+                        status = "upcoming"
+                        status_text = "下一节"
+                    else:
+                        status = "past"
+                        status_text = "已结束"
+                else:
+                    status = "no_class"
+                    status_text = "今日无课"
+                
+                # 格式化时间信息
+                if course.get("start_time") and course.get("end_time"):
+                    time_str = f"{course['start_time'].strftime('%H:%M')} - {course['end_time'].strftime('%H:%M')}"
+                elif status == "no_class":
+                    time_str = "今日所有课程已结束"
+                else:
+                    time_str = "时间未知"
+                
+                # 格式化课程信息
+                if course.get("summary") != "今日无课":
+                    course_info = course.get("summary", "无课程信息")
+                    if course.get("location"):
+                        course_info += f" @ {course['location']}"
+                else:
+                    course_info = "今日无课"
+                
+                # 构建avatar_url（这里使用默认的占位图，实际应该从user_id获取头像）
+                avatar_url = f"https://q1.qlogo.cn/g?b=qq&nk={course.get('user_id', '')}&s=640"
+                
+                formatted_courses.append({
+                    "avatar_url": avatar_url,
+                    "nickname": course.get("nickname", "未知用户"),
+                    "status": status,
+                    "status_text": status_text,
+                    "course_info": course_info,
+                    "time_info": time_str
+                })
+            
             # 准备模板数据
             template_data = {
-                "courses": courses
+                "courses": formatted_courses
             }
             
             # 渲染模板
