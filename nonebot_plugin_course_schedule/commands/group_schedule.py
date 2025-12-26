@@ -11,6 +11,7 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
 from ..utils.data_manager import data_manager
 from ..utils.ics_parser import ics_parser
 from ..utils.image_generator import image_generator
+from ..config import config
 
 
 group_schedule = on_command(
@@ -26,6 +27,8 @@ group_schedule = on_command(
 async def _(bot: Bot, event: GroupMessageEvent, arg: Message = CommandArg()):
     group_id = event.group_id
     user_data = data_manager.load_user_data()
+    if group_id in config.course_group_blacklist:
+        await group_schedule.finish()  # 可选：不回复直接结束
     if str(group_id) not in user_data:
         await group_schedule.send("本群还没有人绑定课表哦~")
         return None

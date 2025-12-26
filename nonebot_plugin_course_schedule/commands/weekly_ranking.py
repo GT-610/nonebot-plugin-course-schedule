@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from ..utils.data_manager import data_manager
 from ..utils.ics_parser import ics_parser
 from ..utils.image_generator import image_generator
+from ..config import config
 import os
 
 weekly_ranking = on_command(
@@ -15,6 +16,8 @@ weekly_ranking = on_command(
 async def _(bot: Bot, event: GroupMessageEvent):
     group_id = event.group_id
     user_data = data_manager.load_user_data()
+    if group_id in config.course_group_blacklist:
+        await weekly_ranking.finish()  # 可选：不回复直接结束
     if str(group_id) not in user_data:
         await weekly_ranking.send("本群还没有人绑定课表哦~")
         return None

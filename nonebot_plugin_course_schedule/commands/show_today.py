@@ -16,6 +16,7 @@ from nonebot.adapters.onebot.v11 import (
 from ..utils.data_manager import data_manager
 from ..utils.ics_parser import ics_parser
 from ..utils.image_generator import image_generator
+from ..config import config
 
 show_today = on_command(
     "show_today",
@@ -34,6 +35,10 @@ async def _(
 ):
     group_id = event.group_id if isinstance(event, GroupMessageEvent) else None
     user_id = event.user_id
+    
+    # 检查群聊黑名单
+    if group_id and group_id in config.course_group_blacklist:
+        await show_today.finish()  # 可选：不回复直接结束
 
     args = shlex.split(arg.extract_plain_text())
     logger.info(f"{user_id} 查询课表: {args}")
